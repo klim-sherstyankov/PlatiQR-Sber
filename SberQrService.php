@@ -7,14 +7,20 @@ namespace App\Service;
 use App\Entity\Application;
 use Doctrine\ORM\EntityManagerInterface;
 
-class SberQrService
+class SberQrPayment
 {
     const URL_TOKEN_AUTHORIZATION = 'https://api.sberbank.ru/ru/prod/tokens/v2/oauth';
-    const URL_ORDER_CREATE        = 'https://api.sberbank.ru/ru/prod/order/v1/creation';
-    const URL_ORDER_STATUS        = 'https://api.sberbank.ru/ru/prod/order/v1/status';
+    const URL_ORDER_CREATE        = 'https://api.sberbank.ru/prod/qr/order/v3/creation';
+    const URL_ORDER_STATUS        = 'https://api.sberbank.ru/prod/qr/order/v3/status';
+    const URL_ORDER_REVOKE        = 'https://api.sberbank.ru/prod/qr/order/v3/revocation';
+    const URL_ORDER_CANCEL        = 'https://api.sberbank.ru/prod/qr/order/v3/cancel';
+    const URL_ORDER_REGISTRY      = 'https://api.sberbank.ru/prod/qr/order/v3/registry';
     const SCOPES                  = [
-        'create' => 'https://api.sberbank.ru/order.create',
-        'status' => 'https://api.sberbank.ru/order.status',
+        'create'   => 'https://api.sberbank.ru/order.create',
+        'status'   => 'https://api.sberbank.ru/order.status',
+        'revoke'   => 'https://api.sberbank.ru/qr/order.revoke',
+        'cancel'   => 'https://api.sberbank.ru/qr/order.cancel',
+        'registry' => 'auth://qr/order.registry',
     ];
 
     private $clientId;
@@ -27,9 +33,9 @@ class SberQrService
     public function __construct(EntityManagerInterface $manager)
     {
         $this->manager     = $manager;
-        $this->clientId    = $clientId;
-        $this->clientToken = $clientToken;
-        $this->qrId        = $qrId;
+        $this->clientId    = 'xxxx';
+        $this->clientToken = 'xxxx';
+        $this->qrId        = 'xxxx';
     }
 
     /**
