@@ -33,9 +33,9 @@ class SberQrPayment
     public function __construct(EntityManagerInterface $manager)
     {
         $this->manager     = $manager;
-        $this->clientId    = 'xxxx';
-        $this->clientToken = 'xxxx';
-        $this->qrId        = 'xxxx';
+        $this->clientId    = 'XXXX';
+        $this->clientToken = 'XXXX';
+        $this->qrId        = 'XXXX';
     }
 
     /**
@@ -64,7 +64,7 @@ class SberQrPayment
             'accept: application/json',
             'authorization: Bearer '.$this->getToken(self::SCOPES['create']),
             'content-type: application/json',
-            'x-ibm-client-id: '.$this->$clientId,
+            'x-ibm-client-id: '.$this->clientId,
             'x-Introspect-RqUID: '.$rqUid,
         ];
 
@@ -137,7 +137,7 @@ class SberQrPayment
             'accept: application/json',
             'authorization: Bearer '.$this->getToken(self::SCOPES['status']),
             'content-type: application/json',
-            'x-ibm-client-id: '.$this->$clientId,
+            'x-ibm-client-id: '.$this->clientId,
             'x-Introspect-RqUID: '.$rq_uid,
         ];
         $date  = new DateTime();
@@ -165,7 +165,7 @@ class SberQrPayment
             'authorization: '.$this->getAuthorizationHeader(),
             'content-type: application/x-www-form-urlencoded',
             'rquid: '.$this->getRandomString(),
-            'x-ibm-client-id: '.$this->$clientId,
+            'x-ibm-client-id: '.$this->clientId,
         ];
 
         $postFields = [
@@ -194,7 +194,7 @@ class SberQrPayment
      */
     public static function getRandomString(int $length = 25): string
     {
-        $random_string = str_pad(md5(date('c')), $length, rand());
+        $random_string = str_pad(md5(date('c')), $length, (string)rand());
 
         return $random_string;
     }
