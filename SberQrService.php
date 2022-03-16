@@ -9,12 +9,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class SberQrPayment
 {
-    const URL_TOKEN_AUTHORIZATION = 'https://api.sberbank.ru/ru/prod/tokens/v2/oauth';
-    const URL_ORDER_CREATE        = 'https://api.sberbank.ru/prod/qr/order/v3/creation';
-    const URL_ORDER_STATUS        = 'https://api.sberbank.ru/prod/qr/order/v3/status';
-    const URL_ORDER_REVOKE        = 'https://api.sberbank.ru/prod/qr/order/v3/revocation';
-    const URL_ORDER_CANCEL        = 'https://api.sberbank.ru/prod/qr/order/v3/cancel';
-    const URL_ORDER_REGISTRY      = 'https://api.sberbank.ru/prod/qr/order/v3/registry';
+    const URL_TOKEN_AUTHORIZATION = 'https://api.sberbank.ru:8443/ru/prod/tokens/v2/oauth';
+    const URL_ORDER_CREATE        = 'https://api.sberbank.ru:8443/prod/qr/order/v3/creation';
+    const URL_ORDER_STATUS        = 'https://api.sberbank.ru:8443/prod/qr/order/v3/status';
+    const URL_ORDER_REVOKE        = 'https://api.sberbank.ru:8443/prod/qr/order/v3/revocation';
+    const URL_ORDER_CANCEL        = 'https://api.sberbank.ru:8443/prod/qr/order/v3/cancel';
+    const URL_ORDER_REGISTRY      = 'https://api.sberbank.ru:8443/prod/qr/order/v3/registry';
     const SCOPES                  = [
         'create'   => 'https://api.sberbank.ru/order.create',
         'status'   => 'https://api.sberbank.ru/order.status',
@@ -33,9 +33,9 @@ class SberQrPayment
     public function __construct(EntityManagerInterface $manager)
     {
         $this->manager     = $manager;
-        $this->clientId    = 'XXXX';
-        $this->clientToken = 'XXXX';
-        $this->qrId        = 'XXXX';
+        $this->clientId    = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+        $this->clientToken = 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
+        $this->qrId        = 'xxxxxxxx';
     }
 
     /**
@@ -47,8 +47,8 @@ class SberQrPayment
         $application = $this->manager->getRepository(Application::class)->findOneById($applicationId);
         $items       = [];
         $sum         = 0;
-        foreach ($application->getApplicationProducts() as $i => $item) {
-            $price   = (int) round($item->getTariffPrice() * 100);
+        foreach ($application->getProducts() as $i => $item) {
+            $price   = (int) round($item->getPrice() * 100);
             $items[] = [
                 'position_name'        => $item->getName(),
                 'position_count'       => ['value' => 1, 'measure' => 'шт'],
@@ -84,7 +84,7 @@ class SberQrPayment
             'description'       => 'Номер заказа: '.$application->calcPaymentId(),
         ];
 
-        $response = $this->sendCurl(self::URL_API_ORDER_CREATE, $headers, $order, 'POST');
+        $response = $this->sendCurl(self::URL_ORDER_CREATE, $headers, $order, 'POST');
 
         return $response;
     }
@@ -116,7 +116,6 @@ class SberQrPayment
             CURLOPT_POSTFIELDS     => 'POST' == $type ? json_encode($postFields) : http_build_query($postFields),
             CURLOPT_HTTPHEADER     => $headers,
         ];
-
         curl_setopt_array($curl, $curlOptions);
         $response = curl_exec($curl);
         $result   = json_decode($response, true);
@@ -148,7 +147,7 @@ class SberQrPayment
             'order_id' => $orderId,
         ];
 
-        $response = $this->sendCurl(self::URL_API_ORDER_STATUS, $headers, $order, 'POST');
+        $response = $this->sendCurl(self::URL_ORDER_STATUS, $headers, $order, 'POST');
 
         return $response;
     }
@@ -192,7 +191,7 @@ class SberQrPayment
      * @param  int $length [колличество знаков в строке]
      * @return string              [рандомная строка]
      */
-    public static function getRandomString(int $length = 25): string
+    public static function getRandomString(int $length = 32): string
     {
         $random_string = str_pad(md5(date('c')), $length, (string)rand());
 
